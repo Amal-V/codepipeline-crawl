@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Parameters:
+  StackName:
+    Type: SlackUri
+    Description: Slack Uri for sending notification
+Resources:
+  LambdaFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs4.3
+      CodeUri: ./
+      Environment:
+        Variables:
+          SLACK_URI: !Ref SlackUri
+      Role: !Ref CodePipelineRole
+      Events:
+        Type: Schedule
+        Properties:
+          Schedule: rate(5 minutes)
+      
+      CodePipelineRole:
+        Type: AWS::IAM::Role
+        Properties:
+          RoleName: codepipeline-crawl
+          AssumeRolePolicyDocument:
+            Statement:
+            - Effect: Allow
+              Principal:
+                Service: [ec2.amazonaws.com]
+              Action: 
+                - codepipeline:GetPipeline
+                - codepipeline:GetPipelineState
+                - codepipeline:GetPipelineExecution
+              Resource: "*"
