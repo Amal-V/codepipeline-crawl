@@ -44,5 +44,5 @@ exports.handler = (event, context, callback) => {
         })
     }   
     });
-    callback(null, `Successfully processed ${event.Records.length} records.`);
+    callback(null, `Successfully processed records.`);
 };
